@@ -10,6 +10,7 @@ export class IgController {
   @Post('instagram')
   async instagramAuth(@Body() { code }: { code: string }, @Res() response: Response): Promise<void> {
     try {
+      console.log(code);
       const authResponse = await this.appService.exchangeCodeForToken(code).toPromise();
       console.log(authResponse);
       // Do something with authResponse if needed
