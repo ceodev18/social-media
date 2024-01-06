@@ -27,7 +27,7 @@ export class IgService {
       client_id: '363680826135832',
       client_secret: 'a08db3a38b4522f15264a2ce72165e5c',
       grant_type: 'authorization_code',
-      redirect_uri: 'https://social-media.adaptable.app/instagram/callback',
+      redirect_uri: 'https://beta-frontend-phi.vercel.app/',
       code,
     });
     return this.httpService.post(url, data.toString(), {
