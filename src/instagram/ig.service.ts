@@ -1,16 +1,8 @@
+// ig.service.ts
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
-
-
-interface InstagramAuthResponse {
-  access_token: string;
-  user: {
-    id: string;
-    username: string;
-    // ...other user data
-  };
-}
+import { Observable, Observer } from 'rxjs';
+import { InstagramAuthResponse } from './dto/instagram-auth-response';
 
 @Injectable()
 export class IgService {
@@ -30,7 +22,7 @@ export class IgService {
       code,
     });
 
-    return new Observable((observer) => {
+    return new Observable((observer: Observer<InstagramAuthResponse>) => {
       fetch(url, {
         method: 'POST',
         headers: {
@@ -38,12 +30,19 @@ export class IgService {
         },
         body: data.toString(),
       })
-        .then((response) => response.json())
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error(`Instagram API error: ${response.status} - ${await response.text()}`);
+          }
+          return response.json();
+        })
         .then((json) => {
+          console.log(json);
           observer.next(json as InstagramAuthResponse);
           observer.complete();
         })
         .catch((error) => {
+          console.error('Instagram authentication error:', error);
           observer.error(error);
         });
     });

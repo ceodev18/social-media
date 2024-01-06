@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { IgService } from './ig.service';
+import { InstagramAuthResponse } from './dto/instagram-auth-response';
 
 @Controller('ig')
 export class IgController {
@@ -15,15 +16,22 @@ export class IgController {
       console.log(code);
 
       // Subscribe to the observable to get the value
-      this.appService.exchangeCodeForToken(code).subscribe((authResponse) => {
-        console.log(authResponse);
-        // Do something with authResponse if needed
-        // Redirect to user profile or desired page
-        response.redirect('https://beta-frontend-phi.vercel.app/');
-      });
+      this.appService.exchangeCodeForToken(code).subscribe(
+        (result: InstagramAuthResponse) => {
+          // Process the result
+          console.log(result);
+
+          // Return a JSON response to the client
+          response.json(result);
+        },
+        (error) => {
+          console.error('Instagram authentication error:', error);
+          response.status(500).json({ error: 'Internal Server Error' }); // Send a JSON error response
+        },
+      );
     } catch (error) {
-      console.error('Instagram authentication error:', error);
-      response.status(500).send('Internal Server Error'); // Handle the error gracefully
+      console.error('Unexpected error:', error);
+      response.status(500).json({ error: 'Internal Server Error' }); // Send a JSON error response
     }
   }
 }
