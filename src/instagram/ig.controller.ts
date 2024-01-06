@@ -3,20 +3,25 @@ import { Response } from 'express';
 import { IgService } from './ig.service';
 import { InstagramAuthResponse } from './dto/instagram-auth-response';
 
+class InstagramAuthDto {
+  code: string;
+}
+
 @Controller('ig')
 export class IgController {
   constructor(private readonly appService: IgService) {}
 
   @Post('instagram')
   async instagramAuth(
-    @Body() { code }: { code: string },
+    @Body() body: InstagramAuthDto,
     @Res() response: Response,
   ): Promise<void> {
     try {
-      console.log(code);
+      console.log(body);
+      console.log(body.code);
 
       // Subscribe to the observable to get the value
-      this.appService.exchangeCodeForToken(code).subscribe(
+      this.appService.exchangeCodeForToken(body.code).subscribe(
         (result: InstagramAuthResponse) => {
           // Process the result
           console.log(result);
