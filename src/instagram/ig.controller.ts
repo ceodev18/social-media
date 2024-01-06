@@ -16,7 +16,7 @@ export class IgController {
       // Do something with authResponse if needed
 
       // Redirect to user profile or desired page
-      response.redirect('/user-profile');
+      response.redirect('https://beta-frontend-phi.vercel.app/');
     } catch (error) {
       console.error('Instagram authentication error:', error);
       response.status(500).send('Internal Server Error'); // Handle the error gracefully
