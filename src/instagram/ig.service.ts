@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -15,7 +14,7 @@ interface InstagramAuthResponse {
 
 @Injectable()
 export class IgService {
-  constructor(private httpService: HttpService) {}
+  constructor() {}
 
   getHello(): string {
     return 'Hello World!';
@@ -30,13 +29,23 @@ export class IgService {
       redirect_uri: 'https://beta-frontend-phi.vercel.app/',
       code,
     });
-    return this.httpService.post(url, data.toString(), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      transformRequest: [(data) => data], // Keep the data as is (URLSearchParams)
-    }).pipe(
-      map((response) => response.data as InstagramAuthResponse)
-    );
+
+    return new Observable((observer) => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data.toString(),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          observer.next(json as InstagramAuthResponse);
+          observer.complete();
+        })
+        .catch((error) => {
+          observer.error(error);
+        });
+    });
   }
 }
