@@ -19,7 +19,7 @@ export class IgService {
       client_secret: 'a08db3a38b4522f15264a2ce72165e5c',
       grant_type: 'authorization_code',
       redirect_uri: 'https://beta-frontend-phi.vercel.app/',
-      code,
+      code: code,
     });
 
     return new Observable((observer: Observer<InstagramAuthResponse>) => {
